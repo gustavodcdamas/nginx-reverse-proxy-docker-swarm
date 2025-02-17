@@ -1,0 +1,72 @@
+version: "3.7"
+
+##############
+#
+# Execute o mando para migrar o banco:
+#
+# bundle exec rails db:chatwoot_prepare
+#
+#############
+
+services:
+  chatwoot_app:
+    image: sendingtk/chatwoot:v3.13.6
+    command: bundle exec rails s -p 3000 -b 0.0.0.0
+    entrypoint: docker/entrypoints/rails.sh
+    name: chatwoot_app
+    restart: always
+    env_file: .env
+    volumes:
+      - chatwoot_data:/app/storage
+      - chatwoot_public:/app
+    networks:
+      - net_geral
+      - net_swarm
+    deploy:
+      replicas: 1
+      resources:
+        limits:
+          cpus: "1"
+          memory: 1G
+        reservations:
+          cpus: "0.25"
+          memory: 512M
+      restart_policy:
+        condition: on-failure
+  chatwoot_sidekiq:
+    image: sendingtk/chatwoot:v3.13.6
+    command: bundle exec sidekiq -C config/sidekiq.yml
+    name: chatwoot_sidekiq
+    restart: always
+    env_file: .env
+    volumes:
+      - chatwoot_data:/app/storage
+      - chatwoot_public:/app
+    networks:
+      - net_geral
+      - net_swarm
+    deploy:
+      replicas: 1
+      resources:
+        limits:
+          cpus: "1"
+          memory: 1G
+        reservations:
+          cpus: "0.25"
+          memory: 512M
+      restart_policy:
+        condition: on-failure
+
+volumes:
+  chatwoot_data:
+    driver: local
+  chatwoot_public:
+    driver: local
+
+networks:
+  net_swarm:
+    external: true
+    attachable: true
+  net_geral:
+    driver: bridge
+    external: true

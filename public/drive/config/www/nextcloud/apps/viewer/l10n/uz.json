@@ -1,0 +1,11 @@
+{ "translations": {
+    "Download" : "Download",
+    "Delete" : "Delete",
+    "Name" : "Name",
+    "Save" : "Save",
+    "Cancel" : "Cancel",
+    "Confirm" : "Confirm",
+    "Size" : "Size",
+    "Continue" : "Continue"
+},"pluralForm" :"nplurals=1; plural=0;"
+}

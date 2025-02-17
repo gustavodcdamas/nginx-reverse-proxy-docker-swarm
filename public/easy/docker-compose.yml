@@ -1,0 +1,34 @@
+version: '3.8'
+services:
+  easy:
+    image: 'easyappointments:latest'
+    build:
+      context: ./
+    container_name: easy
+    restart: always
+    env_file: .env
+    ports:
+      - '5353:5353'
+    volumes:
+      - ./config:/var/www/html/config
+    networks:
+      - net_geral
+      - net_swarm 
+    deploy:
+      replicas: 1
+      resources:
+        limits:
+          cpus: "1"
+          memory: 1G
+        reservations:
+          cpus: "0.25"
+          memory: 512M
+      restart_policy:
+        condition: on-failure
+networks:
+  net_swarm:
+    external: true
+    attachable: true
+  net_geral:
+    driver: bridge
+    external: true

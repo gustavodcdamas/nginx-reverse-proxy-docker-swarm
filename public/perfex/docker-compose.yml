@@ -1,0 +1,48 @@
+version: "3.7"
+#################################################
+####  Imagem Personalizada Alltomatos        ####
+####    https://alltomatos.dev.br            ####
+#### PreRequisito: banco mysql criado        ####
+#################################################
+#### na VPS adcionar cron:                   #### 
+#### digitar comando: crontab -e             ####  
+#### digitar letra: i                        #### 
+#### */5 * * * https://seudominio/cron/index ####
+#################################################
+####    chave pix: pix@alltomatos.com.br     ####
+#################################################
+services:
+  perfexcrm321:
+    image: alltomatos/perfexcrm:3.2.1.A
+    name: perfex
+    env_file: .env
+    ports:
+      - "5252:5252"
+    networks:
+      - net_geral
+      - net_swarm 
+    volumes:
+      - perfex_data:/var/www/html
+      - ./uploads.ini:/usr/local/etc/php/conf.d/uploads.ini
+    deploy:
+      replicas: 1
+      resources:
+        limits:
+          cpus: "1"
+          memory: 1G
+        reservations:
+          cpus: "0.25"
+          memory: 512M
+      restart_policy:
+        condition: on-failure
+
+volumes:
+  perfex_data:
+
+networks:
+  net_swarm:
+    external: true
+    attachable: true
+  net_geral:
+    driver: bridge
+    external: true

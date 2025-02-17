@@ -1,0 +1,20 @@
+groups:
+  - name: docker_alerts
+    rules:
+      - alert: DockerContainerDown
+        expr: up{job="docker"} == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Container {{ $labels.instance }} caiu"
+          description: "O container em {{ $labels.instance }} não está respondendo por mais de 1 minuto."
+
+      - alert: HighCpuUsage
+        expr: rate(container_cpu_usage_seconds_total[5m]) > 0.8
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Uso elevado de CPU"
+          description: "O uso de CPU está acima de 80% por mais de 2 minutos."

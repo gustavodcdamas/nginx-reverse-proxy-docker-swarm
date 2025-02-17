@@ -1,0 +1,22 @@
+version: '3'
+services:
+  node-exporter:
+    image: prom/node-exporter
+    container_name: node-exporter
+    restart: always
+    ports:
+      - "9100:9100"
+    networks:
+      - net_swarm
+      - net_geral
+
+networks:
+  net_swarm:
+    name: net_swarm
+    external: true
+    attachable: true
+  net_geral:
+    name: net_geral
+    driver: bridge
+    external: true
+    attachable: true

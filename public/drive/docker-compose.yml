@@ -1,0 +1,42 @@
+version: "3"
+
+services:
+  drive:
+    image: linuxserver/nextcloud:latest
+    name: drive
+    env_file: .env    
+    volumes:
+      - nextcloud:/var/www/html
+      - ./config:/config
+      - ./data:/data
+      - /etc/ssl/drive:/etc/ssl/nextcloud
+      - ./nginx/letsencrypt:/etc/ssl/nextcloud
+      - /etc/letsencrypt:/etc/ssl/nextcloud
+    ports:
+      - 8081:443
+    restart: unless-stopped
+    networks:
+      - net_geral
+      - net_swarm
+    deploy:
+      replicas: 1
+      resources:
+        limits:
+          cpus: "1"
+          memory: 1G
+        reservations:
+          cpus: "0.25"
+          memory: 512M
+      restart_policy:
+        condition: on-failure
+volumes:
+  nextcloud:
+    driver: local
+
+networks:
+  net_swarm:
+    external: true
+    attachable: true
+  net_geral:
+    driver: bridge
+    external: true

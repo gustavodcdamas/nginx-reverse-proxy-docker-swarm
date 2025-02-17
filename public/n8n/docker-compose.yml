@@ -1,0 +1,62 @@
+version: "3.7"
+services:
+  n8n:
+    image: n8nio/n8n:latest
+    name: n8n
+    env_file: .env
+    ports:
+      - "5678:5678"
+    depends_on:
+      - postgres_n8n
+    volumes:
+      - n8n:/home/node/.n8n
+    networks:
+      - net_geral
+      - net_swarm
+    deploy:
+      replicas: 1
+      resources:
+        limits:
+          cpus: "1"
+          memory: 1G
+        reservations:
+          cpus: "0.25"
+          memory: 512M
+      restart_policy:
+        condition: on-failure
+  postgres_n8n:
+    restart: always
+    image: postgres:latest
+    name: postgres_n8n
+    environment:
+      - POSTGRES_DB=n8n
+      - POSTGRES_USER=n8n
+      - POSTGRES_PASSWORD=securepassword
+    volumes:
+      - postgres_n8n:/var/lib/postgresql/data
+    networks:
+      - net_geral
+      - net_swarm
+    deploy:
+      replicas: 1
+      resources:
+        limits:
+          cpus: "1"
+          memory: 1G
+        reservations:
+          cpus: "0.25"
+          memory: 512M
+      restart_policy:
+        condition: on-failure
+networks:
+  net_swarm:
+    external: true
+    attachable: true
+  net_geral:
+    driver: bridge
+    external: true
+
+volumes:
+  postgres_n8n:
+  n8n:
+

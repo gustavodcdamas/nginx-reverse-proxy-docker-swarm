@@ -1,0 +1,36 @@
+version: '3'
+services:
+  grafana:
+    image: grafana/grafana
+    restart: always
+    env_file: .env
+    name: grafana
+    ports:
+      - "3001:3001"
+    volumes:
+      - ./grafana_data:/var/lib/grafana
+    networks:
+      - net_swarm
+      - net_geral
+    deploy:
+      replicas: 1
+      resources:
+        limits:
+          cpus: "1"
+          memory: 1G
+        reservations:
+          cpus: "0.25"
+          memory: 512M
+      restart_policy:
+        condition: on-failure
+
+networks:
+  net_swarm:
+    name: net_swarm
+    external: true
+    attachable: true
+  net_geral:
+    name: net_geral
+    driver: bridge
+    external: true
+    attachable: true

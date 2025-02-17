@@ -1,0 +1,20 @@
+version: '3.8'
+services:
+    type:
+        image: 
+        container_name: type
+        build:
+            context: ./
+        ports:
+            - 3000:80
+            - 3000:443
+        volumes:
+        networks:
+            - net_local
+            - geral
+
+networks:
+    net_local:
+        driver: bridge
+    geral:
+        external: true

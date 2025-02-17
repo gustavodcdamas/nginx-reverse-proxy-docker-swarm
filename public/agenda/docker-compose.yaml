@@ -1,0 +1,49 @@
+version: '3.8'
+
+networks:
+  net_swarm:
+    external: true
+    attachable: true
+  net_geral:
+    driver: bridge
+    external: true
+
+services:
+  calcom:
+    image: calcom.docker.scarf.sh/calcom/cal.com
+    container_name: calcom
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_WEBAPP_URL: ${NEXT_PUBLIC_WEBAPP_URL}
+        NEXT_PUBLIC_API_V2_URL: ${NEXT_PUBLIC_API_V2_URL}
+        NEXT_PUBLIC_LICENSE_CONSENT: ${NEXT_PUBLIC_LICENSE_CONSENT}
+        CALCOM_TELEMETRY_DISABLED: ${CALCOM_TELEMETRY_DISABLED}
+        NEXTAUTH_SECRET: ${NEXTAUTH_SECRET}
+        CALENDSO_ENCRYPTION_KEY: ${CALENDSO_ENCRYPTION_KEY}
+        DATABASE_URL: ${DATABASE_URL}
+        DATABASE_DIRECT_URL: ${DATABASE_URL}
+        ALLOWED_HOSTNAMES: cuei.com.br
+      network: stack
+    restart: always
+    networks:
+      - net_geral
+      - net_swarm
+    ports:
+      - 3000:3000
+    env_file: .env
+    environment:
+      - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${DATABASE_HOST}/${POSTGRES_DB}
+      - DATABASE_DIRECT_URL=${DATABASE_URL}
+    deploy:
+      replicas: 1
+      resources:
+        limits:
+          cpus: "1"
+          memory: 1G
+        reservations:
+          cpus: "0.25"
+          memory: 512M
+      restart_policy:
+        condition: on-failure
