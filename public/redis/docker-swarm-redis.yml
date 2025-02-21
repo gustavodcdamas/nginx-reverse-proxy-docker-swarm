@@ -1,18 +1,17 @@
 version: "3.8"
 
 services:
-  postgres:
-    image: postgres:16.4
-    container_name: postgres
+  redis:
+    image: redis:latest
     env_file: .env
-    command: [postgres, --max_connections=100]
+    command: ["redis-server", "--appendonly", "yes", "--port", "6379", "--requirepass", "Mesa12Chuveiro67"]
     networks:
       - net_geral
     volumes:
-      - postgres_data:/var/lib/postgresql/data
-    ports:
-      - 5432:5432
+      - ./redis_data:/data
     deploy:
+      labels:
+        - "com.docker.stack.namespace=redis"
       replicas: 1
       resources:
         limits:
@@ -23,12 +22,8 @@ services:
           memory: 512M
       restart_policy:
         condition: on-failure
-    
-volumes:
-  postgres_data:
-    external: true
 
 networks:
   net_geral:
-    driver: bridge
+    attachable: true
     external: true

@@ -1,15 +1,15 @@
-version: '3.7'
+version: '3.8'
 services:
-  evolution2:
-    name: evolution2
-    image: atendai/evolution-api:v2.2.2
-    restart: always
+  easy:
+    image: 'alextselegidis/easyappointments:latest'
     env_file: .env
-    networks:
-      - net_swarm
-      - net_geral
     ports:
-      - 8080:8080
+      - '5353:5353'
+    volumes:
+      - easy_config:/var/www/html/config
+    networks:
+      - net_geral
+      - net_swarm 
     deploy:
       replicas: 1
       resources:
@@ -21,6 +21,10 @@ services:
           memory: 512M
       restart_policy:
         condition: on-failure
+
+volumes:
+  easy_config:
+    external: true
 
 networks:
   net_swarm:

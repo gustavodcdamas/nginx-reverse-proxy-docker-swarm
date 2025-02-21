@@ -1,20 +1,15 @@
 version: "3"
 
 services:
-  drive:
+  nextcloud:
     image: linuxserver/nextcloud:latest
-    name: drive
     env_file: .env    
     volumes:
       - nextcloud:/var/www/html
-      - ./config:/config
-      - ./data:/data
-      - /etc/ssl/drive:/etc/ssl/nextcloud
-      - ./nginx/letsencrypt:/etc/ssl/nextcloud
-      - /etc/letsencrypt:/etc/ssl/nextcloud
+      - nextcloud_config:/config
+      - nextcloud_data:/data
     ports:
       - 8081:443
-    restart: unless-stopped
     networks:
       - net_geral
       - net_swarm
@@ -31,12 +26,16 @@ services:
         condition: on-failure
 volumes:
   nextcloud:
-    driver: local
+    external: true
+  nextcloud_config:
+    external: true
+  nextcloud_data:
+    external: true
 
 networks:
   net_swarm:
     external: true
     attachable: true
   net_geral:
-    driver: bridge
+    attachable: true
     external: true

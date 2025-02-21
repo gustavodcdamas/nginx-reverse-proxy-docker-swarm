@@ -1,14 +1,14 @@
 version: "3.7"
-
 services:
-  n8n_editor:
+  n8n:
     image: n8nio/n8n:latest
     env_file: .env
-    name: n8n
     command: start
     networks:
       - net_geral
       - net_swarm
+    volumes:
+      - n8n:/home/node/.n8n
     deploy:
       replicas: 1
       resources:
@@ -22,12 +22,13 @@ services:
         condition: on-failure
   n8n_webhook:
     image: n8nio/n8n:latest
-    name: n8n_webhook
     env_file: .env
     command: webhook
     networks:
       - net_geral
       - net_swarm
+    volumes:
+      - n8n:/home/node/.n8n
     deploy:
       replicas: 1
       resources:
@@ -36,17 +37,18 @@ services:
           memory: 1G
         reservations:
           cpus: "0.25"
-          memory: 512M
+          memory: 256M
       restart_policy:
         condition: on-failure
   n8n_worker:
     image: n8nio/n8n:latest
-    name: n8n_worker
     env_file: .env
     command: worker --concurrency=10
     networks:
       - net_geral
       - net_swarm
+    volumes:
+      - n8n:/home/node/.n8n
     deploy:
       replicas: 1
       resources:
@@ -63,10 +65,9 @@ networks:
     external: true
     attachable: true
   net_geral:
-    driver: bridge
+    attachable: true
     external: true
 
 volumes:
   n8n:
     external: true
-    name: n8n

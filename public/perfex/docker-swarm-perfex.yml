@@ -13,8 +13,7 @@ version: "3.7"
 #################################################
 services:
   perfexcrm321:
-    image: alltomatos/perfexcrm:3.2.1.A
-    name: perfex
+    image: astraonline/perfexcrmsaas:3.1.5
     env_file: .env
     ports:
       - "5252:5252"
@@ -23,7 +22,6 @@ services:
       - net_swarm 
     volumes:
       - perfex_data:/var/www/html
-      - ./uploads.ini:/usr/local/etc/php/conf.d/uploads.ini
     deploy:
       replicas: 1
       resources:
@@ -38,6 +36,7 @@ services:
 
 volumes:
   perfex_data:
+    external: true
 
 networks:
   net_swarm:

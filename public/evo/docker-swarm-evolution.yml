@@ -1,16 +1,16 @@
-version: "3.8"
-
+version: '3.7'
 services:
-  redis:
-    image: redis:latest
-    name: redis
-    restart: always
+  evolution:
+    image: atendai/evolution-api:v2.1.1
     env_file: .env
-    command: ["redis-server", "--appendonly", "yes", "--port", "6379", "--requirepass", "Mesa12Chuveiro67"]
     networks:
+      - net_swarm
       - net_geral
     volumes:
-      - redis_data:/data
+      - evolution_instances:/evolution/instances
+      - evolution_store:/evolution/store
+    ports:
+      - 8080:8080
     deploy:
       replicas: 1
       resources:
@@ -22,12 +22,16 @@ services:
           memory: 512M
       restart_policy:
         condition: on-failure
-
 volumes:
-  redis_data:
+  evolution_instances:
+    external: true
+  evolution_store:
     external: true
 
 networks:
+  net_swarm:
+    external: true
+    attachable: true
   net_geral:
-    driver: bridge
+    attachable: true
     external: true

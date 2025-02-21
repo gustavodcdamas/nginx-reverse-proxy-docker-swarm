@@ -1,20 +1,19 @@
-version: '3.8'
+version: "3.8"
+
 services:
-  easy:
-    image: 'easyappointments:latest'
-    build:
-      context: ./
-    container_name: easy
-    restart: always
+  postgres:
+    image: postgres:16.4
     env_file: .env
-    ports:
-      - '5353:5353'
-    volumes:
-      - ./config:/var/www/html/config
+    command: [postgres, --max_connections=100]
     networks:
       - net_geral
-      - net_swarm 
+    volumes:
+      - ./postgres_data:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
     deploy:
+      labels:
+        - "com.docker.stack.namespace=postgres"
       replicas: 1
       resources:
         limits:
@@ -25,10 +24,8 @@ services:
           memory: 512M
       restart_policy:
         condition: on-failure
+
 networks:
-  net_swarm:
-    external: true
-    attachable: true
   net_geral:
-    driver: bridge
+    attachable: true
     external: true

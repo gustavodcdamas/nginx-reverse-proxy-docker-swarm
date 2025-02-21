@@ -13,8 +13,6 @@ services:
     image: sendingtk/chatwoot:v3.13.6
     command: bundle exec rails s -p 3000 -b 0.0.0.0
     entrypoint: docker/entrypoints/rails.sh
-    name: chatwoot_app
-    restart: always
     env_file: .env
     volumes:
       - chatwoot_data:/app/storage
@@ -36,8 +34,6 @@ services:
   chatwoot_sidekiq:
     image: sendingtk/chatwoot:v3.13.6
     command: bundle exec sidekiq -C config/sidekiq.yml
-    name: chatwoot_sidekiq
-    restart: always
     env_file: .env
     volumes:
       - chatwoot_data:/app/storage
@@ -59,14 +55,14 @@ services:
 
 volumes:
   chatwoot_data:
-    driver: local
+    external: true
   chatwoot_public:
-    driver: local
+    external: true
 
 networks:
   net_swarm:
     external: true
     attachable: true
   net_geral:
-    driver: bridge
+    attachable: true
     external: true

@@ -5,13 +5,12 @@ networks:
     external: true
     attachable: true
   net_geral:
-    driver: bridge
+    attachable: true
     external: true
 
 services:
   calcom:
     image: calcom.docker.scarf.sh/calcom/cal.com
-    container_name: calcom
     build:
       context: .
       dockerfile: Dockerfile
@@ -24,18 +23,13 @@ services:
         CALENDSO_ENCRYPTION_KEY: ${CALENDSO_ENCRYPTION_KEY}
         DATABASE_URL: ${DATABASE_URL}
         DATABASE_DIRECT_URL: ${DATABASE_URL}
-        ALLOWED_HOSTNAMES: cuei.com.br
-      network: stack
-    restart: always
+      network: net_geral
     networks:
       - net_geral
       - net_swarm
     ports:
       - 3000:3000
     env_file: .env
-    environment:
-      - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${DATABASE_HOST}/${POSTGRES_DB}
-      - DATABASE_DIRECT_URL=${DATABASE_URL}
     deploy:
       replicas: 1
       resources:
